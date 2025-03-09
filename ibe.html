@@ -1,0 +1,1833 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Epic Quiz Quest</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      /* Basic Reset and Full-Viewport Setup */
+      html,
+      body {
+        margin: 0;
+        padding: 0;
+        width: 100%;
+        height: 100%;
+        overflow-x: hidden;
+        font-family: "Press Start 2P", cursive;
+      }
+      
+      body {
+        background-image: url("1st bg.jpg");
+        background-size: cover;
+        background-position: center;
+        transition: background 0.5s ease-in-out;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+      }
+      
+      /* Media Queries for Responsiveness */
+      @media screen and (max-width: 600px) {
+        .button {
+          width: 90%;
+          height: 50px;
+          font-size: 14px;
+        }
+        .title-image {
+          height: 100px;
+        }
+      }
+      
+      /* Main Menu Styles */
+      #main-menu {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        animation: fadeIn 1s ease;
+        position: relative;
+      }
+      
+      .title-image {
+        width: 100%;
+        max-width: 800px;
+        height: 150px;
+        margin-bottom: 20px;
+      }
+      
+      .tagline {
+        color: white;
+        font-size: 18px;
+        margin-bottom: 30px;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+      }
+      
+      /* Button Base Styles with Retro Font */
+      .button {
+        background-color: transparent;
+        border: none;
+        color: white;
+        padding: 15px 32px;
+        text-align: center;
+        font-size: 16px;
+        margin: 10px 0;
+        cursor: pointer;
+        border-radius: 12px;
+        width: 300px;
+        height: 60px;
+        text-shadow: 1px 1px #000;
+        background-size: cover;
+        background-position: center;
+        position: relative;
+        transition: transform 0.25s ease, opacity 0.5s ease;
+        font-family: "Press Start 2P", cursive;
+      }
+      
+      .button:hover {
+        transform: scale(1.05);
+      }
+      
+      .button span {
+        position: relative;
+        z-index: 1;
+      }
+      
+      /* Using same image asset for all buttons */
+      #play-button,
+      #enter-button,
+      #profile-button,
+      .back-button,
+      .profile-back-button,
+      .choice-button,
+      .profile-settings-button {
+        background-image: url("button 1.png");
+      }
+      
+      .rank-button {
+        background-image: url("button 2.png");
+        width: 350%;
+        max-width: 1300px;
+        height: 80px;
+        font-size: 24px;
+      }
+      
+      /* Back and Profile Settings Buttons */
+      .back-button,
+      .profile-back-button {
+        position: fixed;
+        top: 20px;
+        left: 20px;
+        width: 120px;
+        height: 50px;
+        z-index: 10;
+      }
+      
+      .profile-settings-button {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        width: 140px;
+        height: 50px;
+        z-index: 10;
+      }
+      
+      /* New style for the profile button in Main Menu:
+         Circular form and fixed to the top-right corner */
+      #profile-button {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        padding: 0;
+        margin: 0;
+        z-index: 10;
+        background-size: cover;
+        background-position: center;
+        border: none;
+      }
+      
+      /* Choice button styles (for battle choices) with retro font */
+      .choice-button {
+        border: none;
+        color: black;
+        padding: 15px 20px;
+        text-align: center;
+        font-size: 16px;
+        cursor: pointer;
+        border-radius: 8px;
+        width: 100%;
+        height: 100%;
+        font-weight: bold;
+        background-size: cover;
+        background-position: center;
+        position: relative;
+        transition: background 0.2s ease;
+        font-family: "Press Start 2P", cursive;
+      }
+      
+      .choice-button span {
+        position: relative;
+        z-index: 1;
+      }
+      
+      /* Sections hidden by default */
+      #quiz-setup,
+      #quiz-levels,
+      #quiz-cards,
+      #battle-game,
+      #profile,
+      #popup-container,
+      #tutorial-modal {
+        display: none;
+      }
+      
+      /* Card Container and Quiz Card Styles */
+      .card-container {
+        display: flex;
+        gap: 20px;
+        justify-content: center;
+        flex-wrap: wrap;
+      }
+      
+      .quiz-card {
+        width: 350px;
+        height: 450px;
+        background: white;
+        border-radius: 10px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-size: 18px;
+        font-weight: bold;
+        cursor: pointer;
+        transition: transform 0.3s ease;
+        position: relative;
+        overflow: hidden;
+        background-size: 175% 133% !important;
+        background-position: center center;
+        background-repeat: no-repeat;
+        border: none;
+        box-shadow: 0 8px 16px rgba(0,0,0,0.3);
+        overflow: hidden;
+      }
+      
+      .quiz-card:hover {
+        transform: scale(1.1);
+      }
+      
+      .quiz-card .content {
+        display: none;
+        position: absolute;
+        background: rgba(0, 0, 0, 0.85);
+        color: white;
+        padding: 20px;
+        width: 100%;
+        height: 100%;
+        justify-content: center;
+        align-items: center;
+      }
+      
+      .quiz-card:hover .content {
+        display: flex;
+      }
+      
+      /* Levels Container */
+      .levels-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 30px;
+        width: 100%;
+      }
+      
+      /* Battle Game Section */
+      #battle-game {
+        width: 100%;
+        height: 100%;
+        flex-direction: column;
+        justify-content: space-between;
+        align-items: center;
+        background-size: cover;
+        background-position: center;
+        padding: 20px;
+        position: relative;
+        animation: fadeIn 0.5s ease;
+      }
+      
+      #question-container {
+        background: rgba(0, 0, 0, 0.8);
+        color: white;
+        padding: 20px;
+        border-radius: 10px;
+        font-size: 24px;
+        width: 80%;
+        text-align: center;
+        margin: 80px 0 20px 0;
+        transition: opacity 0.5s ease;
+      }
+      
+      #battle-scene {
+        width: 80%;
+        height: 200px;
+        background: rgba(255, 255, 255, 0.2);
+        border: 2px solid white;
+        border-radius: 10px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-size: 20px;
+        color: white;
+        margin-bottom: 20px;
+        transition: transform 0.5s ease;
+      }
+      
+      #choices-container {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        grid-template-rows: repeat(2, 1fr);
+        gap: 15px;
+        width: 75%;
+        max-width: 1300px;
+        height: 20%;
+      }
+      
+      /* Form Container */
+      .form-container {
+        background-image: url("scroll.png");
+        background-size: cover;
+        background-position: center;
+        padding: 70px;
+        border-radius: 20px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+        width: 100%;
+        max-width: 800px;
+        margin: 0 auto;
+        animation: fadeIn 1s ease;
+      }
+      
+      .form-container h2 {
+        color: white;
+        font-size: 24px;
+        margin-bottom: 20px;
+      }
+      
+      .form-container label {
+        color: white;
+        font-size: 16px;
+        margin-bottom: 10px;
+        display: block;
+      }
+      
+      .form-container input {
+        width: 100%;
+        padding: 10px;
+        margin-bottom: 15px;
+        border-radius: 5px;
+        border: 1px solid #ccc;
+        font-size: 16px;
+      }
+      
+      /* Profile Section */
+      #profile {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        background-image: url("book-bg.jpg");
+        background-size: cover;
+        background-position: center;
+        width: 100%;
+        height: 100%;
+      }
+      
+      .book {
+        width: 90%;
+        max-width: 800px;
+        height: 80%;
+        padding: 20px;
+        font-family: Georgia, serif;
+        color: #3e2723;
+        background: rgba(255, 253, 240, 0.9);
+        border: 5px solid #8B4513;
+        border-radius: 10px;
+        box-shadow: 0 0 15px rgba(0, 0, 0, 0.7);
+        animation: fadeIn 1s ease;
+      }
+      
+      .page {
+        display: none;
+        width: 100%;
+        height: 100%;
+      }
+      
+      .page.active {
+        display: block;
+      }
+      
+      .page-content {
+        text-align: left;
+      }
+      
+      .page-content h2 {
+        margin: 0;
+        font-size: 24px;
+        text-align: center;
+      }
+      
+      .page-content p {
+        font-size: 16px;
+        margin-top: 15px;
+      }
+      
+      .page-button {
+        background-color: #8B4513;
+        color: white;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 16px;
+        margin-top: 20px;
+        transition: background-color 0.2s ease;
+      }
+      
+      .page-button:hover {
+        background-color: #6B3A1A;
+      }
+      
+      /* Popup Styles - Centering on Screen */
+      #popup-container {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.8);
+        display: none;
+        justify-content: center;
+        align-items: center;
+        z-index: 1000;
+      }
+      
+      #popup {
+        background: white;
+        padding: 20px;
+        border-radius: 10px;
+        text-align: center;
+        max-width: 400px;
+        width: 90%;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+      }
+      
+      #popup button {
+        background-color: #4CAF50;
+        color: white;
+        padding: 15px 30px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 16px;
+        margin-top: 20px;
+        transition: background-color 0.3s ease;
+        display: block;
+        margin: 20px auto 0;
+      }
+      
+      #popup button:hover {
+        background-color: #45a049;
+        transform: scale(1.05);
+      }
+      
+      /* Tutorial Modal Styles */
+      #tutorial-modal {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background: rgba(0, 0, 0, 0.9);
+        color: #fff;
+        padding: 40px;
+        border-radius: 10px;
+        text-align: left;
+        max-width: 600px;
+        width: 90%;
+        z-index: 2000;
+        display: none;
+      }
+      
+      #tutorial-modal h2 {
+        margin-top: 0;
+        font-size: 28px;
+      }
+      
+      #tutorial-modal p {
+        font-size: 16px;
+        line-height: 1.4;
+      }
+      
+      #tutorial-modal button {
+        margin-top: 20px;
+        background-color: #4CAF50;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 5px;
+        cursor: pointer;
+      }
+      
+      #tutorial-modal button:hover {
+        background-color: #45a049;
+      }
+      
+      /* Simple fadeIn animation */
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+        }
+        to {
+          opacity: 1;
+        }
+      }
+
+      /* Increased font size for title */
+      .title-text {
+        font-size: 72px; /* Increased from 48px */
+        text-align: center;
+        color: white;
+        text-shadow: 2px 2px 4px rgba(0,0,0,0.7);
+        margin-bottom: 30px;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        font-weight: bold;
+      }
+      
+      /* Center name input */
+      .form-container form {
+        text-align: center;
+      }
+      
+      /* Locked levels */
+      .locked-rank {
+        opacity: 0.5;
+        pointer-events: none;
+        position: relative;
+      }
+      
+      .locked-rank::after {
+        content: "🔒";
+        position: absolute;
+        right: 10px;
+        top: 50%;
+        transform: translateY(-50%);
+      }
+
+      /* Animations */
+      @keyframes fadeInUp {
+        from {
+          opacity: 0;
+          transform: translateY(20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .fade-in-up {
+        animation: fadeInUp 0.5s ease-out;
+      }
+
+      /* Rank label */
+      .rank-label {
+        color: white;
+        font-size: 32px;
+        text-align: center;
+        margin-bottom: 20px;
+        text-shadow: 2px 2px 4px rgba(0,0,0,0.7);
+      }
+
+      /* Mission completed overlay */
+      .mission-complete {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background: rgba(0,0,0,0.9);
+        color: gold;
+        padding: 20px;
+        border-radius: 10px;
+        text-align: center;
+        z-index: 1000;
+      }
+
+      /* Answer explanation */
+      .explanation {
+        margin-top: 20px;
+        padding: 10px;
+        background: rgba(255,255,255,0.9);
+        border-radius: 5px;
+        color: #333;
+      }
+
+      /* Physics book unlock */
+      .physics-book {
+        display: none;
+        background: rgba(255,253,240,0.95);
+        padding: 20px;
+        border-radius: 10px;
+        margin-top: 20px;
+        font-family: Georgia, serif;
+        line-height: 1.6;
+      }
+
+      .physics-book h3 {
+        color: #8B4513;
+        margin-top: 20px;
+        font-size: 20px;
+      }
+
+      .physics-book p {
+        margin: 10px 0;
+        text-align: justify;
+      }
+
+      .physics-chapter {
+        margin-bottom: 30px;
+        padding: 15px;
+        border-bottom: 2px solid #8B4513;
+      }
+
+      /* Mission Completed Screen */
+      .mission-completed-screen {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.9);
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        z-index: 2000;
+        animation: fadeIn 1s ease;
+      }
+
+      .mission-completed-screen h1 {
+        color: gold;
+        font-size: 48px;
+        text-align: center;
+        margin-bottom: 30px;
+        text-shadow: 2px 2px 4px rgba(0,0,0,0.7);
+      }
+
+      .mission-completed-screen p {
+        color: white;
+        font-size: 24px;
+        margin-bottom: 40px;
+        text-align: center;
+      }
+
+      .mission-completed-screen button {
+        background-color: gold;
+        color: black;
+        padding: 15px 30px;
+        border: none;
+        border-radius: 10px;
+        font-size: 20px;
+        cursor: pointer;
+        transition: transform 0.3s ease;
+        font-family: "Press Start 2P", cursive;
+      }
+
+      .mission-completed-screen button:hover {
+        transform: scale(1.1);
+      }
+
+      /* Mission Transition Popup */
+      .mission-transition {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%) scale(0);
+        background: rgba(0, 0, 0, 0.9);
+        color: gold;
+        padding: 30px;
+        border-radius: 15px;
+        text-align: center;
+        z-index: 2000;
+        animation: popIn 0.5s ease forwards;
+      }
+
+      @keyframes popIn {
+        0% { transform: translate(-50%, -50%) scale(0); }
+        70% { transform: translate(-50%, -50%) scale(1.1); }
+        100% { transform: translate(-50%, -50%) scale(1); }
+      }
+
+      .mission-transition h2 {
+        font-size: 24px;
+        margin-bottom: 10px;
+        color: gold;
+        text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+      }
+
+      .mission-title {
+        color: white;
+        font-size: 36px;
+        text-align: center;
+        margin-bottom: 40px;
+        text-shadow: 2px 2px 4px rgba(0,0,0,0.7);
+        width: 100%;
+      }
+
+      .mission-cards-wrapper {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        width: 100%;
+        padding: 20px;
+      }
+
+      .card-container {
+        display: flex;
+        gap: 40px;
+        justify-content: center;
+        flex-wrap: wrap;
+        max-width: 1200px;
+        margin: 0 auto;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Main Menu: Title, Tagline, PLAY, PROFILE & Tutorial Button -->
+    <div id="main-menu">
+      <h1 class="title-text"></h1>
+      <img src="TITLEEEEE.png" alt="Epic Quiz Quest Title" class="title-image" />
+      <div class="tagline"></div>
+      <button class="button" id="play-button" onclick="playSound('click'); showQuizSetup()">
+        <span>PLAY</span>
+      </button>
+      <button class="button" id="tutorial-button" onclick="playSound('click'); showTutorial()">
+        <span>TUTORIAL</span>
+      </button>
+      <button class="button" id="profile-button" onclick="playSound('click'); showProfile()">
+        <span>PRO</span>
+      </button>
+    </div>
+    
+    <!-- Tutorial Modal -->
+    <div id="tutorial-modal">
+      <h2>How to Play</h2>
+      <p>
+        Welcome to Epic Quiz Quest! In this game, you will traverse a series of thoughtful challenges, battle missions,
+        and levels. Use the on-screen buttons to navigate through menus and answer questions by selecting among the choices.
+        Earn points, track your progress in your profile, and aim for excellence in each mission.
+      </p>
+      <button onclick="closeTutorial()">Close Tutorial</button>
+    </div>
+    
+    <!-- Quiz Setup -->
+    <div id="quiz-setup">
+      <button class="button back-button" onclick="playSound('click'); resetAll()">
+        <span>Back</span>
+      </button>
+      <div class="form-container">
+        <h2>Enter Your Details</h2>
+        <form id="setup-form">
+          <label for="name">Name:</label>
+          <input type="text" id="name" name="name" required /><br /><br />
+          <label for="age">Age:</label>
+          <input type="number" id="age" name="age" required /><br /><br />
+          <button type="button" class="button" id="enter-button" onclick="playSound('click'); saveUserDetails(); showQuizLevels()">
+            <span>Enter</span>
+          </button>
+        </form>
+      </div>
+    </div>
+    
+    <!-- Quiz Levels -->
+    <div id="quiz-levels">
+      <button class="button back-button" onclick="playSound('click'); resetAll()">
+        <span>Back</span>
+      </button>
+      <div class="levels-container">
+        <div class="rank-label">Rotational Motion</div>
+        <button class="button rank-button" id="rank-a-button" onclick="playSound('click'); showQuestions('A')">
+          <span>Rank A</span>
+        </button>
+        <button class="button rank-button" id="rank-b-button" onclick="playSound('click'); showQuestions('B')">
+          <span>Rank B</span>
+        </button>
+        <button class="button rank-button" id="rank-c-button" onclick="playSound('click'); showQuestions('C')">
+          <span>Rank C</span>
+        </button>
+        <button class="button rank-button" id="rank-d-button" onclick="playSound('click'); showQuestions('D')">
+          <span>Rank D</span>
+        </button>
+        <button class="button rank-button" id="rank-f-button" onclick="playSound('click'); showQuestions('F')">
+          <span>Rank F</span>
+        </button>
+      </div>
+    </div>
+    
+    <!-- Quiz Cards -->
+    <div id="quiz-cards">
+      <button class="button back-button" onclick="playSound('click'); goBackToRanks()">
+        <span>Back</span>
+      </button>
+      <div class="card-container" id="card-container"></div>
+    </div>
+    
+    <!-- Battle Game Section -->
+    <div id="battle-game">
+      <button class="button back-button" onclick="playSound('click'); goBackToCards()">
+        <span>Back</span>
+      </button>
+      <div id="question-container">Question will appear here</div>
+      <div id="battle-scene">Retro Battle Scene</div>
+      <div id="choices-container"></div>
+    </div>
+    
+    <!-- Profile Section - Book Style -->
+    <div id="profile">
+      <button class="profile-back-button" onclick="playSound('click'); resetAll()">
+        <span>Back</span>
+      </button>
+      <button class="profile-settings-button" onclick="playSound('click'); showProfileSettings()">
+        <span>Settings</span>
+      </button>
+      <div class="book">
+        <div class="page active" id="page-1">
+          <div class="page-content">
+            <h2>Profile Information</h2>
+            <p id="profile-display">
+              <!-- Updated profile info will appear here -->
+            </p>
+            <button class="page-button" onclick="nextPage()">Next Page</button>
+          </div>
+        </div>
+        <div class="page" id="page-2">
+          <div class="page-content">
+            <h2>Mission Progression</h2>
+            <p id="mission-display">
+              <!-- Mission details will appear here -->
+            </p>
+            <button class="page-button" onclick="prevPage()">Previous Page</button>
+          </div>
+        </div>
+        <div class="page" id="physics-book">
+          <div class="page-content">
+            <h2>Physics Lessons</h2>
+            <div class="physics-book">
+              <!-- Physics content will be loaded here -->
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Popup for Wrong Answers (Centered on Screen) -->
+    <div id="popup-container">
+      <div id="popup">
+        <h2>Incorrect!</h2>
+        <p>That is not the correct answer. Please try again.</p>
+        <button onclick="playSound('click'); closePopup()">Retry</button>
+      </div>
+    </div>
+    
+    <audio id="click-sound" src="click.mp3"></audio>
+    <audio id="correct-sound" src="correct.mp3"></audio>
+    <audio id="incorrect-sound" src="incorrect.mp3"></audio>
+    <audio id="bgMusic" loop>
+      <source src="bg music ya.mp3" type="audio/mpeg">
+    </audio>
+    
+    <script>
+      // Global variables for user details and mission progress
+      let userName = "";
+      let userAge = "";
+      let missionProgress = {
+        "Mission 1": false,
+        "Mission 2": false,
+        "Mission 3": false,
+      };
+
+      // Global variables for battle mission
+      let battleQuestions = [];
+      let currentQuestionIndex = 0;
+      let battleStage = 1;
+      let currentRank = '';
+      let currentMission = '';
+
+      // Questions data structure: organizing questions by rank and mission.
+      const questionsByRank = {
+        "F": {
+          "mission1": [
+            {
+              question: "Adventurer needs to measure the length of a branch for a support beam. Which unit is most appropriate?",
+              choices: [
+                { text: "Meters (m)", correct: true },
+                { text: "Liters (l) - Measures volume.", correct: false },
+                { text: "Kilograms (kg) - Measures mass.", correct: false },
+                { text: "Hectares (ha) - Measures area.", correct: false }
+              ]
+            },
+            {
+              question: "Adventurer needs to collect rainwater for drinking. What unit best describes the volume of water she collects?",
+              choices: [
+                { text: "Grams (g) - Measures mass.", correct: false },
+                { text: "Liters (l)", correct: true },
+                { text: "Meters (m) - Measures length.", correct: false },
+                { text: "Newtons 👎 - Measures force.", correct: false }
+              ]
+            },
+            {
+              question: "Adventurer weighs a stone to use as a makeshift anchor for her shelter. What unit describes its mass?",
+              choices: [
+                { text: "Meters (m) - Measures length.", correct: false },
+                { text: "Pascals (Pa) - Measures pressure.", correct: false },
+                { text: "Joules (J) - Measures energy.", correct: false },
+                { text: "Kilograms (kg)", correct: true }
+              ]
+            }
+          ],
+          "mission2": [
+            {
+              question: "Adventurer pulls on the rope with a force of 50N to the East. The stream's current pushes against the bridge with a force of 30N to the West. What is the net force acting on the bridge?",
+              choices: [
+                { text: "80N to the West", correct: false },
+                { text: "20N to the West", correct: false },
+                { text: "20kg", correct: false },
+                { text: "20N to the East", correct: true }
+              ]
+            },
+            {
+              question: "Adventurer is using a pulley system to lift a heavy pack. She pulls the rope with a force of 60N downwards. The pulley system multiplies her force by 2. What is the upward force on the pack?",
+              choices: [
+                { text: "30N", correct: false },
+                { text: "60N", correct: false },
+                { text: "120N downwards", correct: false },
+                { text: "120N", correct: true }
+              ]
+            },
+            {
+              question: "A strong gust of wind pushes Adventurer's lean-to with a force of 25N to the North, while she pushes back with a force of 15N to the South. What is the net force on the lean-to?",
+              choices: [
+                { text: "40N to the South", correct: false },
+                { text: "10N to the South", correct: false },
+                { text: "10N to the North", correct: false },
+                { text: "10N to the North", correct: true }
+              ]
+            }
+          ],
+          "mission3": [
+            {
+              question: "Adventurer travels 6 km North, then 8 km East. What is the magnitude of her displacement from her starting point?",
+              choices: [
+                { text: "2 km", correct: false },
+                { text: "14 km", correct: false },
+                { text: "48 km", correct: false },
+                { text: "10 km", correct: true }
+              ]
+            },
+            {
+              question: "Adventurer walks 5 km at a bearing of 045 degrees (North-East). Which of the following best describes this quantity?",
+              choices: [
+                { text: "Scalar", correct: false },
+                { text: "Speed", correct: false },
+                { text: "Mass", correct: false },
+                { text: "Vector", correct: true }
+              ]
+            },
+            {
+              question: "Two forces act on a fallen log: 10N to the East and 10N to the West. What is the resultant force on the log?",
+              choices: [
+                { text: "20N East", correct: false },
+                { text: "10N West", correct: false },
+                { text: "10N East", correct: false },
+                { text: "0N", correct: true }
+              ]
+            }
+          ]
+        },
+        "D": {
+          "mission1": [
+            {
+              question: "The elder points to a spinning market wheel used for games of chance. 'Tell me, young one, why does an object moving in a circular path always experience acceleration, even if its speed is constant?'",
+              choices: [
+                { text: "Because it is slowing down", correct: false },
+                { text: "Because its direction is constantly changing", correct: true },
+                { text: "Because it is gaining energy", correct: false },
+                { text: "Because it has no forces acting on it", correct: false }
+              ]
+            },
+            {
+              question: "The elder picks up an old measuring scale and spins one of the hanging plates. 'Now tell me, which of these is NOT a parameter of circular motion?'",
+              choices: [
+                { text: "Angular displacement", correct: false },
+                { text: "Angular velocity", correct: false },
+                { text: "Angular energy", correct: true },
+                { text: "Angular acceleration", correct: false }
+              ]
+            },
+            {
+              question: "The elder holds up a gold coin in one hand and a feather in the other. 'If I drop both of these at the same time, which will hit the ground first, if magically there is no air resistance?'",
+              choices: [
+                { text: "The gold coin", correct: false },
+                { text: "The feather", correct: false },
+                { text: "Both will fall at the same rate and hit the ground together", correct: true },
+                { text: "It depends on their weight", correct: false }
+              ]
+            }
+          ],
+          "mission2": [
+            {
+              question: "The engineer picks up a heavy wrench and holds it over the edge. With a flick of his wrist, the wrench plunges into the water below. 'What is the acceleration of the wrench as it falls, assuming no air resistance?'",
+              choices: [
+                { text: "0 m/s²", correct: false },
+                { text: "9.8 m/s²", correct: true },
+                { text: "9.8 m/s", correct: false },
+                { text: "98 m/s²", correct: false }
+              ]
+            },
+            {
+              question: "The engineer points to a large gear turning slowly. 'If the gear completes one full rotation every 2 seconds, what is its angular velocity?'",
+              choices: [
+                { text: "π radians per second", correct: false },
+                { text: "2π radians per second", correct: true },
+                { text: "π/2 radians per second", correct: false },
+                { text: "4π radians per second", correct: false }
+              ]
+            },
+            {
+              question: "The engineer shows you a pendulum swinging back and forth. 'At what point in its swing is the pendulum's kinetic energy the greatest?'",
+              choices: [
+                { text: "At the highest point of its swing", correct: false },
+                { text: "At the lowest point of its swing", correct: true },
+                { text: "At the midpoint of its swing", correct: false },
+                { text: "At the point where it changes direction", correct: false }
+              ]
+            }
+          ],
+          "mission3": [
+            {
+              question: "The blacksmith shows you a red-hot iron rod. 'If I plunge this rod into a bucket of water, what type of heat transfer will occur?'",
+              choices: [
+                { text: "Conduction", correct: true },
+                { text: "Convection", correct: false },
+                { text: "Radiation", correct: false },
+                { text: "Evaporation", correct: false }
+              ]
+            },
+            {
+              question: "The blacksmith points to a glowing forge. 'What is the primary method of heat transfer from the forge to the surrounding air?'",
+              choices: [
+                { text: "Conduction", correct: false },
+                { text: "Convection", correct: true },
+                { text: "Radiation", correct: false },
+                { text: "Evaporation", correct: false }
+              ]
+            },
+            {
+              question: "The blacksmith holds up a piece of metal. 'If I heat this metal, what will happen to its length?'",
+              choices: [
+                { text: "It will stay the same", correct: false },
+                { text: "It will decrease", correct: false },
+                { text: "It will increase", correct: true },
+                { text: "It will change randomly", correct: false }
+              ]
+            }
+          ]
+        },
+        "B": {
+          "mission1": [
+            {
+              question: "Which of the following best defines work in physics?",
+              choices: [
+                { text: "Applying force to an object, even if it does not move", correct: false },
+                { text: "The transfer of energy when a force moves an object", correct: true },
+                { text: "The effort needed to push something very heavy", correct: false },
+                { text: "The energy stored in an object at rest", correct: false }
+              ]
+            },
+            {
+              question: "The adventurer finds an ancient scroll that describes kinetic energy. Which formula correctly represents kinetic energy?",
+              choices: [
+                { text: "KE = 1/2 mv^2", correct: true },
+                { text: "KE = mv^2", correct: false },
+                { text: "KE = 1/2 mv", correct: false },
+                { text: "KE = mv", correct: false }
+              ]
+            },
+            {
+              question: "The adventurer must push a heavy stone door to continue his journey. What is the unit of work in the SI system?",
+              choices: [
+                { text: "Newton (N)", correct: false },
+                { text: "Joule (J)", correct: true },
+                { text: "Watt (W)", correct: false },
+                { text: "Pascal (Pa)", correct: false }
+              ]
+            }
+          ],
+          "mission2": [
+            {
+              question: "The adventurer climbs a 10-meter cliff carrying a 20 kg backpack. How much potential energy does he gain? (Take g = 9.8 m/s²)",
+              choices: [
+                { text: "1960 J", correct: true },
+                { text: "980 J", correct: false },
+                { text: "500 J", correct: false },
+                { text: "3920 J", correct: false }
+              ]
+            },
+            {
+              question: "The adventurer swings across a gap using a vine. If his mass is 50 kg and his speed before grabbing the vine is 6 m/s, what is his kinetic energy?",
+              choices: [
+                { text: "450 J", correct: false },
+                { text: "900 J", correct: true },
+                { text: "1200 J", correct: false },
+                { text: "1500 J", correct: false }
+              ]
+            },
+            {
+              question: "Reaching the top, the adventurer finds a water-powered mill in the temple. If the mill produces 500 watts of power, how long does it take to do 1000 J of work?",
+              choices: [
+                { text: "1 s", correct: false },
+                { text: "2 s", correct: true },
+                { text: "5 s", correct: false },
+                { text: "10 s", correct: false }
+              ]
+            }
+          ],
+          "mission3": [
+            {
+              question: "The adventurer jumps from a 5-meter ledge to attack the guardian. If his mass is 60 kg, what is his speed just before hitting the ground? (Ignore air resistance, g = 9.8 m/s²)",
+              choices: [
+                { text: "5.5 m/s", correct: false },
+                { text: "7.2 m/s", correct: false },
+                { text: "9.9 m/s", correct: true },
+                { text: "11.5 m/s", correct: false }
+              ]
+            },
+            {
+              question: "The adventurer swings his 10 kg sword at the guardian, increasing its speed from 2 m/s to 6 m/s. How much work is done on the sword?",
+              choices: [
+                { text: "40 J", correct: false },
+                { text: "100 J", correct: false },
+                { text: "160 J", correct: false },
+                { text: "200 J", correct: true }
+              ]
+            },
+            {
+              question: "To finish the battle, the adventurer pushes a boulder weighing 500 kg off a cliff 20 meters high. How much work is done by gravity on the boulder?",
+              choices: [
+                { text: "49,000 J", correct: false },
+                { text: "75,000 J", correct: false },
+                { text: "98,000 J", correct: true },
+                { text: "125,000 J", correct: false }
+              ]
+            }
+          ]
+        },
+        "C": {
+          "mission1": [
+            {
+              question: "Why does the boulder eventually stop moving, even though no one is pushing it anymore?",
+              choices: [
+                { text: "The island’s magic weakens over time.", correct: false },
+                { text: "The boulder stops because of an opposing force called friction.", correct: true },
+                { text: "The air pushes the boulder backward until it stops.", correct: false },
+                { text: "The boulder chooses to stop on its own.", correct: false }
+              ]
+            },
+            {
+              question: "Which of these is a field force that can act on your sword without direct contact?",
+              choices: [
+                { text: "Friction", correct: false },
+                { text: "Gravity", correct: true },
+                { text: "Normal Force", correct: false },
+                { text: "Air Resistance", correct: false }
+              ]
+            },
+            {
+              question: "There are two types of forces in this world. One requires physical touch, while the other can act across distance. What do we call these two forces?",
+              choices: [
+                { text: "Contact Force & Field Force", correct: true },
+                { text: "Normal Force & Friction Force", correct: false },
+                { text: "Push Force & Pull Force", correct: false },
+                { text: "Gravitational Force & Magnetic Force", correct: false }
+              ]
+            }
+          ],
+          "mission2": [
+            {
+              question: "Which principle does this inscription describe: 'An object rests in silence until a force awakens it.'?",
+              choices: [
+                { text: "Law of Inertia", correct: true },
+                { text: "Law of Acceleration", correct: false },
+                { text: "Law of Interaction", correct: false },
+                { text: "The Law of Universal Gravitation", correct: false }
+              ]
+            },
+            {
+              question: "According to Newton’s First Law (Law of Inertia), what will happen if no external force stops a rolling boulder?",
+              choices: [
+                { text: "It will immediately stop due to air resistance.", correct: false },
+                { text: "It will roll forever.", correct: true },
+                { text: "It will slow down and stop on its own.", correct: false },
+                { text: "It will change direction without any force acting on it.", correct: false }
+              ]
+            },
+            {
+              question: "If the ship’s mass doubles but the force pulling it downward stays the same, what happens to its acceleration?",
+              choices: [
+                { text: "The acceleration doubles.", correct: false },
+                { text: "The acceleration stays the same.", correct: false },
+                { text: "The acceleration is cut in half.", correct: true },
+                { text: "The ship stops falling completely.", correct: false }
+              ]
+            }
+          ],
+          "mission3": [
+            {
+              question: "Which of the following best explains how you can maximize your ship’s acceleration?",
+              choices: [
+                { text: "Decrease the force while keeping the ship’s mass the same.", correct: false },
+                { text: "Increase the ship’s mass while keeping the force constant.", correct: false },
+                { text: "Use the same force but decrease the ship’s mass.", correct: false },
+                { text: "Increase the force of the spell while decreasing the ship’s mass.", correct: true }
+              ]
+            },
+            {
+              question: "Which law of physics is the mirror referring to: 'For every action you undertake, the universe responds with an equal and opposite force.'?",
+              choices: [
+                { text: "Law of Action", correct: false },
+                { text: "Law of Inertia", correct: false },
+                { text: "Law of Interaction", correct: true },
+                { text: "Law of Acceleration", correct: false }
+              ]
+            },
+            {
+              question: "Why do you move backward when you push the barrel?",
+              choices: [
+                { text: "The force you exert are lesser than the barrel.", correct: false },
+                { text: "The barrels the same mass that pulls you backward.", correct: false },
+                { text: "The barrel absorbs all the energy and stays still.", correct: false },
+                { text: "The barrel exerts the same force and different direction on you.", correct: true }
+              ]
+            }
+          ]
+        },
+        "A": {
+          "mission1": [
+            {
+              question: "Which of the following represents angular velocity in rotational motion?",
+              choices: [
+                { text: "ω (omega)", correct: true },
+                { text: "α (alpha)", correct: false },
+                { text: "θ (theta)", correct: false },
+                { text: "τ (tau)", correct: false }
+              ]
+            },
+            {
+              question: "The adventurer finds a circular platform that he needs to rotate by applying force at its edge. Which factor does NOT affect how easily the platform rotates?",
+              choices: [
+                { text: "The force applied", correct: false },
+                { text: "The distance from the axis of rotation", correct: false },
+                { text: "The mass of the platform", correct: false },
+                { text: "The color of the platform", correct: true }
+              ]
+            },
+            {
+              question: "The adventurer spins a stone wheel with a constant angular velocity. What happens to its angular acceleration?",
+              choices: [
+                { text: "It increases", correct: false },
+                { text: "It decreases", correct: false },
+                { text: "It stays zero", correct: true },
+                { text: "It becomes negative", correct: false }
+              ]
+            }
+          ],
+          "mission2": [
+            {
+              question: "The adventurer turns a large gear with a radius of 0.5 m, and it completes 2 full revolutions. What is the total angular displacement in radians?",
+              choices: [
+                { text: "2π rad", correct: false },
+                { text: "4π rad", correct: true },
+                { text: "6π rad", correct: false },
+                { text: "8π rad", correct: false }
+              ]
+            },
+            {
+              question: "The adventurer applies a force of 20 N at the edge of a 2-meter long lever to turn a stuck gear. What is the torque applied?",
+              choices: [
+                { text: "10 N·m", correct: false },
+                { text: "20 N·m", correct: false },
+                { text: "40 N·m", correct: true },
+                { text: "60 N·m", correct: false }
+              ]
+            },
+            {
+              question: "The adventurer notices that when a small gear turns, a larger gear rotates more slowly. What property explains this?",
+              choices: [
+                { text: "Angular velocity is conserved", correct: false },
+                { text: "Larger gears always rotate faster", correct: false },
+                { text: "The gear ratio determines speed and direction", correct: true },
+                { text: "Torque is not important", correct: false }
+              ]
+            }
+          ],
+          "mission3": [
+            {
+              question: "The guardian swings a massive spiked ball at the adventurer. If its moment of inertia is 5 kg·m² and its angular velocity is 10 rad/s, what is its rotational kinetic energy?",
+              choices: [
+                { text: "125 J", correct: false },
+                { text: "250 J", correct: true },
+                { text: "500 J", correct: false },
+                { text: "1000 J", correct: false }
+              ]
+            },
+            {
+              question: "The adventurer dodges and counterattacks by spinning rapidly. If his moment of inertia decreases, what happens to his angular velocity (assuming no external torque)?",
+              choices: [
+                { text: "It decreases", correct: false },
+                { text: "It stays the same", correct: false },
+                { text: "It increases", correct: true },
+                { text: "It depends on gravity", correct: false }
+              ]
+            },
+            {
+              question: "The guardian’s weapon has twice the moment of inertia but the same torque is applied. How does its angular acceleration compare?",
+              choices: [
+                { text: "It doubles", correct: false },
+                { text: "It stays the same", correct: false },
+                { text: "It is cut in half", correct: true },
+                { text: "It becomes zero", correct: false }
+              ]
+            }
+          ]
+        }
+      };
+
+      // Play sound function
+      function playSound(sound) {
+        const audio = document.getElementById(`${sound}-sound`);
+        audio.currentTime = 0;
+        audio.play();
+      }
+
+      // Randomize choices for each question
+      function shuffleChoices() {
+        Object.values(questionsByRank).forEach(rank => {
+          Object.values(rank).forEach(mission => {
+            mission.forEach(question => {
+              question.choices.sort(() => Math.random() - 0.5);
+            });
+          });
+        });
+      }
+
+      // Save user details from the form
+      function saveUserDetails() {
+        userName = document.getElementById("name").value;
+        userAge = document.getElementById("age").value;
+        shuffleChoices(); // Shuffle choices when game starts
+      }
+
+      // Update profile display information
+      function updateProfileDisplay() {
+        const profileText = `<strong>Name:</strong> ${userName || "Not set"}<br>
+<strong>Age:</strong> ${userAge || "Not set"}<br>`;
+        document.getElementById("profile-display").innerHTML = profileText;
+        
+        let missionText = "";
+        Object.entries(missionProgressByRank).forEach(([rank, missions]) => {
+          missionText += `<strong>Rank ${rank}:</strong><br>`;
+          Object.entries(missions).forEach(([mission, completed]) => {
+            missionText += `${mission}: ${completed ? "Completed" : "Not Completed"}<br>`;
+          });
+          missionText += "<br>";
+        });
+        document.getElementById("mission-display").innerHTML = missionText;
+      }
+
+      // Reset game to main menu
+      function resetAll() {
+        document.getElementById("quiz-setup").style.display = "none";
+        document.getElementById("quiz-levels").style.display = "none";
+        document.getElementById("quiz-cards").style.display = "none";
+        document.getElementById("battle-game").style.display = "none";
+        document.getElementById("profile").style.display = "none";
+        document.getElementById("popup-container").style.display = "none";
+        document.getElementById("main-menu").style.display = "flex";
+        document.body.style.backgroundImage = "url('1st bg.jpg')";
+        battleStage = 1;
+        const overlay = document.querySelector('.mission-complete');
+        if (overlay) {
+          overlay.remove();
+        }
+      }
+
+      // Show quiz setup screen
+      function showQuizSetup() {
+        document.getElementById("main-menu").style.display = "none";
+        document.getElementById("quiz-setup").style.display = "flex";
+        document.body.style.backgroundImage = "url('2nd bg.jpg')";
+      }
+
+      // Show quiz levels screen
+      function showQuizLevels() {
+        document.getElementById("quiz-setup").style.display = "none";
+        document.getElementById("quiz-levels").style.display = "flex";
+        document.body.style.backgroundImage = "url('3rd bg.jpg')";
+      }
+
+      // Add totalPages constant
+      const totalPages = 3; // Including physics book page
+
+      // Fix showQuestions function
+      function showQuestions(rank) {
+        // Check if previous rank is completed
+        const prevRank = getPreviousRank(rank);
+        if (prevRank && !rankProgress[prevRank]) {
+          alert('Complete the previous rank first!');
+          return;
+        }
+      
+        currentRank = rank;
+        const quizCardsDiv = document.getElementById("card-container");
+        quizCardsDiv.innerHTML = ""; // Clear previous cards
+      
+        // Create wrapper div
+        const wrapper = document.createElement('div');
+        wrapper.className = 'mission-cards-wrapper';
+      
+        // Add title
+        const title = document.createElement('h1');
+        title.className = 'mission-title';
+        title.textContent = `${rankLabels[rank]} Missions`;
+        wrapper.appendChild(title);
+      
+        // Add rank label
+        const rankLabel = document.createElement('div');
+        rankLabel.className = 'rank-label fade-in-up';
+        rankLabel.textContent = rankLabels[rank];
+        wrapper.appendChild(rankLabel);
+      
+        // Create container for cards
+        const cardContainer = document.createElement('div');
+        cardContainer.className = 'card-container';
+      
+        // Create cards for each mission
+        const missions = ["mission1", "mission2", "mission3"];
+        missions.forEach((mission, index) => {
+          const card = document.createElement("div");
+          card.className = "quiz-card";
+          
+          // Set different background images based on mission type
+          switch(mission) {
+            case 'mission1':
+              card.style.backgroundImage = "url('Cards bg.png')";
+              break;
+            case 'mission2':
+              card.style.backgroundImage = "url('Cards bg.png')";
+              break;
+            case 'mission3':
+              card.style.backgroundImage = "url('Cards bg.png')";
+              break;
+          }
+          
+          // Lock cards if previous missions aren't complete
+          const missionNumber = index + 1;
+          if (missionNumber > 1 && !missionProgressByRank[rank][`Mission ${missionNumber - 1}`]) {
+            card.classList.add('locked-rank');
+          }
+          card.dataset.mission = mission;
+          card.onclick = function() {
+            if(!card.classList.contains('locked-rank')) {
+              playSound('click');
+              startMission(mission);
+            }
+          };
+          card.innerHTML = `<div class="content">Mission ${index + 1}</div>Hover to reveal`;
+          cardContainer.appendChild(card);
+        });
+      
+        wrapper.appendChild(cardContainer);
+        quizCardsDiv.appendChild(wrapper);
+      
+        document.getElementById("quiz-levels").style.display = "none";
+        document.getElementById("quiz-cards").style.display = "flex";
+        document.body.style.backgroundImage = "url('quiz-bg.jpg')";
+      }
+
+      // Navigate back to quiz levels from quiz cards
+      function goBackToRanks() {
+        // Remove any completion screens if present
+        const screen = document.querySelector('.mission-completed-screen');
+        if(screen) {
+          screen.remove();
+        }
+        document.getElementById("battle-game").style.display = "none";
+        document.getElementById("quiz-cards").style.display = "none";
+        document.getElementById("quiz-levels").style.display = "flex";
+        document.body.style.backgroundImage = "url('3rd bg.jpg')";
+      }
+
+      // Navigate back to quiz cards from battle mission
+      function goBackToCards() {
+        document.getElementById("battle-game").style.display = "none";
+        document.getElementById("quiz-cards").style.display = "flex";
+        battleStage = 1;
+      }
+
+      // Show profile screen
+      function showProfile() {
+        updateProfileDisplay();
+        document.getElementById("main-menu").style.display = "none";
+        document.getElementById("profile").style.display = "flex";
+        document.body.style.backgroundImage = "url('book-bg.jpg')";
+        currentPage = 1;
+        showPage(currentPage);
+      }
+
+      // Page navigation for profile book
+      function showPage(pageNumber) {
+        for (let i = 1; i <= totalPages; i++) {
+          document.getElementById("page-" + i).classList.remove("active");
+        }
+        document.getElementById("page-" + pageNumber).classList.add("active");
+      }
+
+      function nextPage() {
+        if (currentPage < totalPages) {
+          currentPage++;
+          showPage(currentPage);
+        }
+      }
+
+      function prevPage() {
+        if (currentPage > 1) {
+          currentPage--;
+          showPage(currentPage);
+        }
+      }
+
+      // Tutorial modal functions
+      function showTutorial() {
+        document.getElementById("tutorial-modal").style.display = "block";
+      }
+
+      function closeTutorial() {
+        document.getElementById("tutorial-modal").style.display = "none";
+      }
+
+      // Start mission with a given mission
+      function startMission(mission) {
+        currentMission = mission;
+        const missionQuestions = questionsByRank[currentRank][currentMission];
+        battleQuestions = missionQuestions; // Set current battle questions.
+        currentQuestionIndex = 0;
+        battleStage = 1;
+
+        document.getElementById("quiz-cards").style.display = "none";
+        document.getElementById("battle-game").style.display = "flex";
+
+        // Set background based on mission
+        if (currentMission === "mission1") {
+          document.body.style.backgroundImage = "url('mission 1 bg.jpg')";
+        } else if (currentMission === "mission2") {
+          document.body.style.backgroundImage = "url('mission 2 bg.jpg')";
+        } else if (currentMission === "mission3") {
+          document.body.style.backgroundImage = "url('mission 3 bg.jpg')";
+        }
+
+        // Optionally set a background based on question or mission.
+        const currentQ = missionQuestions[currentQuestionIndex];
+        if(currentQ) {
+          updateBattleUI();
+        }
+      }
+
+      // Update Battle UI with the current question.
+      function updateBattleUI() {
+        const currentQ = battleQuestions[currentQuestionIndex];
+        document.getElementById("question-container").innerHTML =
+          `<h3>Stage ${battleStage} - ${currentQ.question}</h3>`;
+
+        const choicesContainer = document.getElementById("choices-container");
+        choicesContainer.innerHTML = "";
+
+        currentQ.choices.forEach(choice => {
+          const button = document.createElement("button");
+          button.className = "choice-button";
+          button.innerHTML = `<span>${choice.text}</span>`;
+          button.onclick = () => {
+            playSound("click");
+            handleChoice(choice);
+          };
+          choicesContainer.appendChild(button);
+        });
+
+        // Add animation effects if desired.
+        document.getElementById("question-container").style.opacity = 1;
+        document.getElementById("battle-scene").style.transform = "scale(1)";
+      }
+
+      // Handle battle answer choice
+      function handleChoice(selectedChoice) {
+        const currentQ = battleQuestions[currentQuestionIndex];
+        if (selectedChoice.correct) {
+          playSound("correct");
+          showExplanation(currentQ);
+          
+          if (currentQuestionIndex < battleQuestions.length - 1) {
+            // Proceed to the next question.
+            document.getElementById("question-container").style.opacity = 0;
+            document.getElementById("battle-scene").style.transform = "scale(0.8)";
+            setTimeout(() => {
+              currentQuestionIndex++;
+              battleStage++;
+              updateBattleUI();
+            }, 2000); // Give time to read explanation
+          } else {
+            // Mission complete.
+            // Mark mission complete and return to quiz cards.
+            const missionNumber = currentMission.slice(-1);
+            missionProgressByRank[currentRank][`Mission ${missionNumber}`] = true;
+            
+            setTimeout(() => {
+              handleMissionComplete();
+            }, 2000);
+          }
+        } else {
+          playSound("incorrect");
+          document.getElementById("popup-container").style.display = "flex"; // Changed to flex
+        }
+      }
+
+      function closePopup() {
+        const popup = document.getElementById("popup-container");
+        popup.style.display = "none";
+      }
+
+      function showProfileSettings() {
+        alert("Profile settings coming soon!");
+      }
+
+      // Add rank labels
+      const rankLabels = {
+        'A': 'Rotational Motion',
+        'B': 'Work, Energy & Power',
+        'C': 'Dynamics',
+        'D': 'Circular Motion', 
+        'F': 'Basic Units'
+      };
+
+      // Track rank completion
+      let rankProgress = {
+        'F': false,
+        'D': false,
+        'C': false,
+        'B': false,
+        'A': false
+      };
+
+      // Add helper function to get next rank
+      function getPreviousRank(currentRank) {
+        const ranks = ['F', 'D', 'C', 'B', 'A'];
+        const currentIndex = ranks.indexOf(currentRank);
+        return currentIndex > 0 ? ranks[currentIndex - 1] : null;
+      }
+
+      // Start background music when game starts
+      document.addEventListener('DOMContentLoaded', () => {
+        const bgMusic = document.getElementById('bgMusic');
+        bgMusic.volume = 0.3;
+        
+        document.onclick = () => {
+          bgMusic.play();
+        };
+
+        // Hide all sections except main menu
+        document.getElementById("main-menu").style.display = "flex";
+        document.getElementById("quiz-setup").style.display = "none";
+        document.getElementById("quiz-levels").style.display = "none";
+        document.getElementById("quiz-cards").style.display = "none";
+        document.getElementById("battle-game").style.display = "none";
+        document.getElementById("profile").style.display = "none";
+        document.getElementById("popup-container").style.display = "none";
+        document.getElementById("tutorial-modal").style.display = "none";
+        document.body.style.backgroundImage = "url('1st bg.jpg')";
+      });
+
+      // Modify handleMissionComplete function to show an option screen after completing rank
+      function handleMissionComplete() {
+        const missionNumber = currentMission.slice(-1);
+        missionProgressByRank[currentRank][`Mission ${missionNumber}`] = true;
+        
+        if(currentMission === 'mission3') {
+          const screen = document.createElement('div');
+          screen.className = 'mission-completed-screen';
+          screen.innerHTML = `
+            <h1>🏆 MISSION COMPLETED! 🏆</h1>
+            <p>Congratulations! You've completed all missions in Rank ${currentRank}!</p>
+            <div style="display: flex; gap: 20px; margin-top: 20px;">
+              <button onclick="proceedToNextRank()">Continue to Next Rank</button>
+              <button onclick="goBackToRanks()" style="background-color: #666;">Return to Ranks</button>
+            </div>
+          `;
+          document.body.appendChild(screen);
+          
+          rankProgress[currentRank] = true;
+          
+          if(Object.values(rankProgress).every(v => v)) {
+            unlockPhysicsBook();
+          }
+        } else {
+          // Show transition popup before next mission
+          const popup = document.createElement('div');
+          popup.className = 'mission-transition';
+          popup.innerHTML = `
+            <h2>Mission ${missionNumber} Complete!</h2>
+            <p>Proceeding to Mission ${parseInt(missionNumber) + 1}...</p>
+          `;
+          document.body.appendChild(popup);
+          
+          setTimeout(() => {
+            popup.remove();
+            const nextMissionNumber = parseInt(missionNumber) + 1;
+            startMission(`mission${nextMissionNumber}`);
+          }, 2000);
+        }
+      }
+
+      // Add the missing function to handle proceeding to next rank
+      function proceedToNextRank() {
+        const screen = document.querySelector('.mission-completed-screen');
+        if(screen) {
+          screen.remove();
+        }
+        
+        // Hide any visible game elements first
+        document.getElementById("battle-game").style.display = "none";
+        document.getElementById("quiz-cards").style.display = "none";
+        
+        const ranks = ['F', 'D', 'C', 'B', 'A'];
+        const currentIndex = ranks.indexOf(currentRank);
+        const nextRank = currentIndex < ranks.length - 1 ? ranks[currentIndex + 1] : null;
+        
+        if (nextRank) {
+          const popup = document.createElement('div');
+          popup.className = 'mission-transition';
+          popup.innerHTML = `
+            <h2>Advancing to Rank ${nextRank}</h2>
+            <p>Get ready for new challenges...</p>
+          `;
+          document.body.appendChild(popup);
+          
+          setTimeout(() => {
+            popup.remove();
+            // Reset any lingering UI states
+            document.getElementById("choices-container").innerHTML = "";
+            document.getElementById("question-container").innerHTML = "";
+            showQuestions(nextRank);
+          }, 2000);
+        } else {
+          alert('Congratulations! You have completed all ranks!');
+          unlockPhysicsBook();
+          resetAll();
+        }
+      }
+
+      // Add explanation after correct answer
+      function showExplanation(question) {
+        const explanation = document.createElement('div');
+        explanation.className = 'explanation fade-in-up';
+        explanation.textContent = question.explanation || 'Great job!';
+        document.getElementById('question-container').appendChild(explanation);
+      }
+
+      // Unlock physics book
+      function unlockPhysicsBook() {
+        const physicsBook = document.querySelector('.physics-book');
+        physicsBook.style.display = 'block';
+        physicsBook.innerHTML = `
+            <div class="physics-chapter">
+                <h3>Chapter 1: Basic Units and Measurements</h3>
+                <p>Learn about SI units, conversions, and scientific notation. Master the fundamentals of measurement and dimensional analysis.</p>
+            </div>
+            <div class="physics-chapter">
+                <h3>Chapter 2: Dynamics</h3>
+                <p>Study Newton's Laws of Motion and their applications. Understand forces, equilibrium, and the principles governing motion.</p>
+            </div>
+            <div class="physics-chapter">
+                <h3>Chapter 3: Work, Energy & Power</h3>
+                <p>Explore the relationships between work, energy, and power. Learn about conservation of energy and mechanical systems.</p>
+            </div>
+            <div class="physics-chapter">
+                <h3>Chapter 4: Circular Motion</h3>
+                <p>Understand uniform circular motion, centripetal forces, and angular quantities. Study real-world applications of rotational dynamics.</p>
+            </div>
+            <div class="physics-chapter">
+                <h3>Chapter 5: Rotational Motion</h3>
+                <p>Master rotational kinematics, torque, angular momentum, and moment of inertia. Apply these concepts to rotating systems.</p>
+        `;
+        alert('🎉 Congratulations! You\'ve unlocked the Physics Book! Check your profile to access valuable physics lessons.');
+        saveProgress(); // Save the achievement
+      }
+
+      // Fix Rank D questions
+      questionsByRank.D.mission2 = [
+        {
+          question: "The engineer picks up a heavy wrench and holds it over the edge. With a flick of his wrist, the wrench plunges into the water below. 'What is the acceleration of the wrench as it falls, assuming no air resistance?'",
+          choices: [
+            { text: "0 m/s²", correct: false },
+            { text: "9.8 m/s²", correct: true },
+            { text: "9.8 m/s", correct: false },
+            { text: "98 m/s²", correct: false }
+          ]
+        },
+        {
+          question: "The engineer points to a large gear turning slowly. 'If the gear completes one full rotation every 2 seconds, what is its angular velocity?'",
+          choices: [
+            { text: "π radians per second", correct: false },
+            { text: "2π radians per second", correct: true },
+            { text: "π/2 radians per second", correct: false },
+            { text: "4π radians per second", correct: false }
+          ]
+        },
+        {
+          question: "The engineer shows you a pendulum swinging back and forth. 'At what point in its swing is the pendulum's kinetic energy the greatest?'",
+          choices: [
+            { text: "At the highest point of its swing", correct: false },
+            { text: "At the lowest point of its swing", correct: true },
+            { text: "At the midpoint of its swing", correct: false },
+            { text: "At the point where it changes direction", correct: false }
+          ]
+        }
+      ];
+
+      // Add these variables at the top with other global variables
+      let currentPage = 1;
+      let missionProgressByRank = {
+        'F': { "Mission 1": false, "Mission 2": false, "Mission 3": false },
+        'D': { "Mission 1": false, "Mission 2": false, "Mission 3": false },
+        'C': { "Mission 1": false, "Mission 2": false, "Mission 3": false },
+        'B': { "Mission 1": false, "Mission 2": false, "Mission 3": false },
+        'A': { "Mission 1": false, "Mission 2": false, "Mission 3": false }
+      };
+    </script>
+  </body>
+</html>
